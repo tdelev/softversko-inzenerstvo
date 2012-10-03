@@ -1,0 +1,41 @@
+\documentclass[a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{ucs}
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english,bulgarian]{babel}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{textcomp}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage[margin=1.5in]{geometry}
+\usepackage[unicode]{hyperref}
+\usepackage{listings}
+\usepackage{color}
+\definecolor{gray}{rgb}{0.6,0.6,0.6}
+\usepackage[usenames,dvipsnames]{xcolor}
+\input{code_style.tex}
+
+\usepackage{fancyhdr}
+\setlength{\headheight}{15pt}
+ 
+\pagestyle{fancyplain}
+
+
+\addto\captionsbulgarian{%
+  \renewcommand{\contentsname}%
+    {Содржина}%
+  \renewcommand{\tablename}%
+    {Табела}%
+  \renewcommand{\figurename}%
+    {Слика}%
+  \renewcommand{\bibname}%
+    {Библиографија}%
+  \renewcommand{\listfigurename}%
+    {Листа на слики}%
+  \renewcommand{\listtablename}%
+    {Листа на табели}%
+}

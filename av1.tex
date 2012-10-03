@@ -1,0 +1,551 @@
+\input{article_preamble.tex}
+
+\rhead{\textsc{Софтверско инженерство}}
+
+\lhead{Аудиториски вежби 1}
+\lfoot{}
+\cfoot{\thepage}
+\rfoot{}
+\usepackage{fancyvrb}
+\usepackage{xcolor}
+\usepackage{textcomp}
+
+\begin{document}
+
+\section{Генеричко програмирање}
+
+\subsection{Вовед}
+
+Генеричкото програмирање претставува програмирање независно од типот на податоци
+над кои ќе оперира. Тоа значи дека истата програма ќе работи со било кој тип на
+податоци кои ќе и бидат проследени.
+
+\begin{enumerate}
+  \item Различно е имплементирано во различни јазици
+  \item Се среќава во: Ada, BETA, C++, D, Eiffel, Java, C\#  
+\end{enumerate}
+
+Механизмот преку кој е реализирано генеричкото програмирање во C++ се шаблоните
+(темплејти, templates).
+
+Кај генеричките функции и класи типот на променливите со кои работат истите се
+специфицира како параметар или се одредуваат од самиот преведувач, зависно од
+нивната употреба. Ова значи дека функцијата или класата напишани како шаблон ќе
+може да се искористат за повеќе различни типови на податоци без потребата да се
+пишуваат различни верзии за секој тип на податоци.
+
+Постојат два вида шаблони:
+\begin{enumerate}
+  \item Функциски темплејти (function templates)
+  \item Класни темплејти (class templates)  
+\end{enumerate}
+
+Да ја претпоставиме следнава ситуација. Имаме функција која пресметува сума на
+елементи на поле од цели броеви.
+
+\lstinputlisting[firstline=1,lastline=6]{src/av1/av1_1.cpp}
+
+Функцијата треба да се преоптеретува ако имаме поле на децимални броеви
+
+\lstinputlisting[firstline=8,lastline=13]{src/av1/av1_1.cpp}
+
+Во ваквите случаи се користат параметризираните функции за да се добие вистински
+општа функција. Параметризираните функции можат да се сметаат како некој рецепт
+или алгоритам за креирање на функција која може да биде употребена со општи
+видови на податоци. Дефиницијата на параметризираните функции е многу слична на
+дефиницијата на обичните функции со тоа што кај нив видовите на податоци што се
+проследуваат, користат и враќаат од функциите се параметризирани. 
+
+\emph{Кај параметризираните функции и класи видот на податоци со кои се оперира
+се проследува како параметар.}
+
+На овој начин се креира една функција или класа за
+повеќе видови на податоци. Со параметризираните функции алгоритмите се кодираат
+независно од податоците. 
+
+\emph{Преведувачот е оној кој зависно од проследениот вид на податоци автоматски ја
+генерира потребната функција.}
+
+ На некој начин ова може да се нарече автоматско преоптоварување. Општата форма
+ на овие функции е следнава
+ 
+\begin{lstlisting}
+template <class_ime>    
+vid  ime_na funkcija( lista ) {
+	// telo na funkcijata
+}
+\end{lstlisting}
+
+\textsl{Пример 1}
+
+\lstinputlisting{src/av1/ex1.cpp}
+
+Клучните зборови \texttt{template} и \texttt{class} се употребуваат за дефинирање на
+параметризираните функции. Тие покрај параметризирани функции (generic function)
+се викаат и \textbf{шаблонски функции} (template function).
+
+\subsection{Функциски темплејти}
+
+Функциските темплејти се функции кои се параметризирани така да претставуваат
+фамилија на функции. Овој вид на темплејти овозможуваат повикување на функциите
+за различни податочни типови. Репрезентацијата на функцијата е слична на обична
+функција, со таа разлика што некои елементи на функцијата се недефинирани. Овие
+елементи се всушност параметризирани. 
+
+Дефинирање на темплејт: Функциски темплејт кој го враќа максимумот од два
+броеви.
+
+\lstinputlisting[firstline=15,lastline=19]{src/av1/av1_1.cpp}
+
+Типот на параметрите е оставен отворен како параметар темплејт \texttt{T}.
+Темплејт параметрите мора да се наведат со следнава синтакса:
+
+\begin{lstlisting}
+template < comma-separated-list-of-parameters >
+\end{lstlisting}
+
+Клучниот збор \texttt{typename} означува таканаречен \texttt{type parameter}. Во
+нашиот случај type parameter е \texttt{T}. Типот на овој параметар се наведува при повикот на
+функцијата. Може да се користи било кој тип (основен податочен тип, класа итн.)
+кој ја обезбедува операцијата која ја користи темплејтот. Од историски причини
+може да се користи \texttt{class} наместо \texttt{typename} за да се дефинира
+\texttt{type parameter}.
+
+\textsl{Пример 2}
+
+\lstinputlisting[lastline=8]{src/av1/ex2.cpp}
+
+\subsection{Употреба на темплејти}
+
+Употреба на \texttt{maximum()} функцискиот темплејт:
+
+\lstinputlisting[firstline=10]{src/av1/ex2.cpp}
+
+Програмата го дава следниов излез:
+
+\begin{verbatim}
+78
+23.4
+13334
+\end{verbatim}
+
+Првиот повик на функцијата:
+
+\begin{lstlisting}
+maximum (15 , 78)
+\end{lstlisting}
+
+го користи функцискиот темплејт со \texttt{int} како template parameter \texttt{T}.
+\begin{lstlisting}
+inline int const& maximum(int const& a, int const& b) {
+	// if a < b then use b else use a
+	return a < b ? b : a;
+}
+\end{lstlisting}
+
+\emph{Процесот на замена на параметрите со конкретни податочни типови се нарекува
+инстанцирање (instantiation).}
+
+\begin{lstlisting}
+const double& maximum(double const&, double const&);
+const std::string& maximum(std::string const&, std::string const&);
+\end{lstlisting}
+
+Обид да се инстанцира темплејт за тип кој не ја подржува операцијата која се
+користи резултира во грешка при компајлирање. 
+
+\textsl{Пример}
+\begin{lstlisting}
+std::complex<float> c1, c2; // doesn't provide operator <
+...
+maximum(c1,c2); // ERROR at compile time
+\end{lstlisting}
+
+
+Темплејтите се компајлираат двапати:
+\begin{enumerate}
+  \item Без инстанцирање, темплејтите се проверуваат за коректна синтакса.
+  \item За време на инстанцирањето, кодот се проверува за да се осигураме дека
+сите повици се валидни.  
+\end{enumerate}
+
+Автоматска конверзија не е дозволена:
+\begin{lstlisting}
+template <typename T>
+inline T const& maximum(T const& a, T const& b);
+...
+maximum(4, 7) // OK: T is int for both arguments
+maximum(4, 4.2) // ERROR: first T is int, second T is double
+\end{lstlisting}
+
+Можни начини за справување со грешките:
+\begin{enumerate}
+  \item кастирање на аргументите:
+  \begin{lstlisting}
+  maximum(static_cast<double>(4),4.2) // OK
+  \end{lstlisting}
+  \item одредување на типот на T:
+  \begin{lstlisting}
+  maximum<double>(4, 4.2) // OK
+  \end{lstlisting}
+  \item наведување дека параметрите може да имаат различни типови. 
+\end{enumerate}
+
+\subsection{\texttt{Template} параметри и \texttt{call} параметри}
+
+Функциските темплејти имаат два вида на параметри:
+\begin{itemize}
+  \item Template parameters, декларирани пред името на функцијата: 
+  \begin{lstlisting}
+  template <typename T> // T is template parameter
+  \end{lstlisting}
+  \item Call parameters,декларирани после името на функцијата: 
+  \begin{lstlisting}
+  maximum(T const& a, T const& b) // a and b are call parameters
+  \end{lstlisting}
+\end{itemize}
+
+Дефинирање на функција со различен тип на call параметри:
+\begin{lstlisting}
+template <typename T1, typename T2>
+inline T1 maximum(T1 const& a, T2 const& b) {
+	return a < b ? b : a;
+}
+...
+maximum(4, 4.2) // OK, but type of first argument defines return type
+\end{lstlisting}
+
+Можни проблеми:
+\begin{itemize}
+  \item мора да се наведе повратниот тип
+  \item непожелно конвертирање од еден во друг повратен тип (пример: бараме
+  максимум на 42 и 66.66 кој може да биде double 66.66 или int 66.
+  \item конвертирањето на вториот аргумент за да одговара на повратниот тип
+  креира нов локален објект заради што неможеме да го вратиме резултатот како
+  референца (\texttt{T1} наместо \texttt{T1 const\&}).
+\end{itemize}
+
+Инстанцирање на темплејт за одреден податочен тип:
+
+\begin{lstlisting}
+template <typename T>
+inline T const& maximum(T const& a, T const& b);
+...
+maximum<double>(4, 4.2) // instantiate T as double
+\end{lstlisting}
+
+употреба на трет аргумент за дефинирање на повратниот тип:
+
+\begin{lstlisting}
+template <typename T1, typename T2, typename RT>
+inline RT maximum(T1 const& a, T2 const& b);
+\end{lstlisting}
+
+\textsl{Пример}
+\begin{lstlisting}
+template <typename T1, typename T2, typename RT>
+inline RT maximum(T1 const& a, T2 const& b);
+...
+maximum<int, double, double>(4, 4.2) // OK, but tedious
+\end{lstlisting}
+
+процес на изведување на типовите на аргументите:
+\begin{lstlisting}
+template <typename RT, typename T1, typename T2>
+inline RT maximum(T1 const& a, T2 const& b);
+...
+maximum<double>(4, 4.2) // OK: return type is double
+\end{lstlisting}
+
+\subsection{Преоптоварување на функциски темплејти}
+
+Исто како обичните функции и функциските темплејти може да се преоптоваруваат.
+
+\textsl{Пример}:
+
+\lstinputlisting{src/av1/ex3.cpp}
+
+преферирање на обичната функција:
+\begin{lstlisting}
+maximum(7, 42) // both int values match the nontemplate function perfectly
+\end{lstlisting}
+
+ако темплејтот обезбедува функција која подобро одговара на повикот се повикува
+функцискиот темплејт:
+
+\begin{lstlisting}
+maximum(7.0, 42.0) // calls the maximum<double> (by argument deduction)
+maximum('a', 'b'); // calls the maximum<char> (by argument deduction)
+\end{lstlisting}
+
+празна листа на аргументи за темплејтите ограничува повик само на темплејт
+функциите:
+
+\begin{lstlisting}
+maximum<>(7, 42) // calls maximum<int> (by argument deduction)
+\end{lstlisting}
+
+Бидејќи автоматската конверзија не е присутна во темплејтите последниот повик е
+всушност повик кон nontemplate функцијата (\texttt{'a'} и \texttt{42.7} се
+конвертираат во \texttt{int}):
+
+\begin{lstlisting}
+maximum('a', 42.7) // only the nontemplate function allows different argument types
+\end{lstlisting}
+
+Следнава програма не работи еднакво за генерирани видови на класи
+
+\lstinputlisting{src/av1/ex4.cpp}
+
+\begin{verbatim}
+maximum(10, 15) = 15
+maximum('k', 's') = s
+maximum(10.1, 15.2) = 15.2
+maximum("Branko", "Aco") = Aco
+\end{verbatim}
+
+Зошто?
+
+\subsection{Специјализирање на темплејт функција} 
+
+Да се специјализира нова темплејт функција за да се корегира програмата
+
+\lstinputlisting{src/av1/ex5.cpp}
+
+\begin{verbatim}
+maximum(10, 15) = 15
+maximum('k', 's') = s
+maximum(10.1, 15.2) = 15.2
+maximum("Branko", "Aco") = Branko
+\end{verbatim}
+
+
+Генерирање на параметризирана функција baraj која ќе шребарува поле од објекти и
+ќе го враќа индексот на најдениот објект или -1 ако не е најден.
+
+\lstinputlisting{src/av1/ex6.cpp}
+
+
+Генерирање параметризирана функција за сортирање на поле.
+
+\lstinputlisting{src/av1/ex7.cpp}
+
+\begin{verbatim}
+ Sortiranje na double pole (golemina == 11) 
+< 1.7  5.7  11.7  14.9  15.7  19.7  26.7  37.7  48.7  59.7  61.7   >
+ Sortiranje na int pole (golemina == 16) 
+< 61  87  154  170  275  426  503  509  512  612  653  677  703  765  897  908   >
+\end{verbatim}
+
+\subsection{Декларација на \texttt{Class Templates}}
+\begin{lstlisting}
+template <typename T>
+class Stack {
+	...
+};
+ili:
+template <class T>
+class Stack {
+	...
+};
+\end{lstlisting}
+
+Дадена е следнава едноставна класа
+
+\begin{lstlisting}
+#include <iostream>
+class abc {
+     char data;
+public:
+     abc(char x) { data = x; cout << data << endl; };
+};
+int main() {
+	abc a('c');
+	return 0;
+}
+\end{lstlisting}
+Да се претвори во шаблонска класа и да се тестира на работа со цели и децимални
+броеви.
+
+\lstinputlisting{src/av1/ex8.cpp}
+
+\subsection{Специјализирање на шаблонска класа}
+
+Специјализираната шаблонска класа се дефинира на следниов начин
+
+\begin{lstlisting}
+template <> class class_name <type> 
+\end{lstlisting}
+
+Соодветно треба да се дефинираат и останатите функции членови.
+
+Потребе е дури и посебен конструктор иако тој е ист со оној на
+неспецијализираниот шаблон бидејќи специјализираниот шаблон не го наследува
+основниот.
+	
+\lstinputlisting{src/av1/ex9.cpp}
+
+\subsection{Примери и задачи}
+Кон градба на шаблонска класа се приоѓа кога класата е можна за повеќе видови
+податоци. Да претпоставиме дека сакаме да конструираме класа
+\texttt{bazenVector} која ќе може да работи со хипотетичниот вид на податоци Т. Потребно е класата да
+се изгради со следниве членови:
+
+\begin{itemize}
+  \item конструктор кој би креирал објекти од класата \texttt{bazenVector} со
+  дадена големина
+  \item деструктор
+  \item препотоварен оператор \texttt{[]} за пристап до саканиот елемент
+\end{itemize}
+
+\lstinputlisting{src/av1/ex10.cpp}
+
+\begin{verbatim}
+dolz na A (15) e 15
+dolz na B (5) e 5
+podatoci vo A (0, 2, 4,...) se 0  2  4  6  8  10  12  14  16  18  20  22  24  26  28  
+podatoci vo B (2.5, 5.5,...)se 2.5  5.5  8.5  11.5  14.5  
+podatoci vo C ('f', 'g',...)se f  g  h  i  j  k  l  m
+\end{verbatim}
+
+Од оваа класа да се состави класа \texttt{iBazenVektor} за класа што ќе работи
+само со цели броеви.
+
+\lstinputlisting{src/av1/ex11.cpp}
+
+\begin{verbatim}
+dolz na A (15) e 15
+podatoci vo A (0, 2, 4,...) se 0  2  4  6  8  10  12  14  16  18  20  22  24  26  28
+dolz na A (15) e 15
+\end{verbatim}
+
+Слично може да се реализира и параметризирана класа за \texttt{Stack}.
+
+\lstinputlisting{src/av1/ex12.cpp}
+
+Програмата ќе испише
+\begin{verbatim}
+Pop s1: c
+Pop s1: b
+Pop s1: a
+Pop s2: z
+Pop s2: y
+Pop s2: x
+Pop ds1: 5.5
+Pop ds1: 3.3
+Pop ds1: 1.1
+Pop ds2: 6.6
+Pop ds2: 4.4
+Pop ds2: 2.2
+\end{verbatim}
+
+Пример за параметризирана класа за \texttt{Queue}
+
+\lstinputlisting{src/av1/ex13.cpp}
+
+Програмата ќе испише
+\begin{verbatim}
+Zemi 1: 1
+Zemi 2: A
+Zemi 1: 2
+Zemi 2: B
+Zemi 1: 3
+Zemi 2: C
+Zemi 1: 4
+Zemi 2: D
+Zemi 1: 5
+Zemi 2: E
+Zemi 1: 6
+Zemi 2: F
+Zemi 1: 7
+Zemi 2: G
+Zemi 1: 8
+Zemi 2: H
+Zemi 1: 9
+Zemi 2: I
+Zemi 1: 10
+Zemi 2: J
+\end{verbatim}
+
+\subsection{Шаблони и статички податочни членови}
+
+Секоја класа или функција генерирана од шаблон има сопствени копии од статични
+членови.
+Во следнава пример програма
+
+\begin{lstlisting}
+template <class T>
+class X {
+    public:
+		static T s;
+};
+
+int main() {
+	X<int> xi;
+ 	X<char*> xc;
+ 	return 0;
+}
+\end{lstlisting}
+
+\texttt{X<int>} има статичен член од видот \texttt{int} и \texttt{X<char*>} има
+статичен член од видот \texttt{char*}.
+
+Како се дефинираат статичните членови кај шаблонските класи ќе биде објаснето во
+следнава пример програма:
+
+\lstinputlisting{src/av1/ex14.cpp}
+
+
+\begin{verbatim}
+xi.s = 3
+xc.s = Programiraj
+\end{verbatim}
+
+Друг пример
+
+\lstinputlisting{src/av1/ex15.cpp}
+
+\begin{verbatim}
+s = 10
+s = Nemoj da programiras
+\end{verbatim}
+
+\subsection{Шаблони и наследство}
+
+\lstinputlisting{src/av1/ex16.cpp}
+
+\begin{verbatim}
+Klasa osnovna 94
+Klasa nasledena 94
+\end{verbatim}
+
+\subsection{Парцијална специјализација}
+
+\begin{lstlisting}
+template <typename T1, typename T2>
+class MyClass {
+...
+};
+// partial specialization: both template parameters have same type
+template <typename T>
+class MyClass<T,T> {
+...
+};
+// partial specialization: second type is int
+template <typename T>
+class MyClass<T,int> {
+...
+};
+// partial specialization: both template parameters are pointer types
+template <typename T1, typename T2>
+class MyClass<T1*,T2*> {
+...
+};
+MyClass<int,float> mif; // uses MyClass<T1,T2>
+MyClass<float,float> mff; // uses MyClass<T,T>
+MyClass<float,int> mfi; // uses MyClass<T,int>
+MyClass<int*,float*> mp; // uses MyClass<T1*,T2*>
+
+\end{lstlisting}
+
+\end{document}
